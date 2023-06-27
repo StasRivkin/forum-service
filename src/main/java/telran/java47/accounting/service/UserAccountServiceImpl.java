@@ -17,6 +17,9 @@ import telran.java47.accounting.dto.exceptions.UserNotFoundException;
 import telran.java47.accounting.model.UserAccount;
 import telran.java47.accounting.model.UserRole;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 @Service
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
@@ -34,6 +37,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		String password = passwordEncoder.encode(userRegisterDto.getPassword());
 		userAccount.setPassword(password);
 		userAccount.addRole(UserRole.USER);
+		userAccount.addPasswordExpirationDate();
 		userAccountRepository.save(userAccount);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -84,6 +88,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
 		String password = passwordEncoder.encode(newPassword);
 		userAccount.setPassword(password);
+		userAccount.setPasswordExpirationDate(LocalDateTime.now().plus(60, ChronoUnit.DAYS));
 		userAccountRepository.save(userAccount);
 
 	}

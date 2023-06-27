@@ -1,5 +1,7 @@
 package telran.java47.accounting.model;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,6 +19,8 @@ public class UserAccount {
 	String login;
 	@Setter
 	String password;
+	@Setter
+	LocalDateTime passwordExpirationDate;
 	@Setter
 	String firstName;
 	@Setter
@@ -41,6 +45,10 @@ public class UserAccount {
 
 	public boolean removeRole(UserRole role) {
 		return roles.remove(role);
+	}
+
+	public void addPasswordExpirationDate(){
+		passwordExpirationDate = LocalDateTime.now().plus(60, ChronoUnit.DAYS);
 	}
 
 }

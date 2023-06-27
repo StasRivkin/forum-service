@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import telran.java47.accounting.model.UserRole;
 
@@ -19,6 +18,10 @@ public class AuthorizationConfiguration {
         http.authorizeRequests(authorize -> authorize
                 .mvcMatchers("/account/register", "/forum/posts/**")
                     .permitAll()
+                .mvcMatchers("/account/password")
+                    .authenticated()
+                .mvcMatchers("/account/**")
+                    .access("@customWebSecurity.checkPasswordExp(authentication.name)")
                 .mvcMatchers("/account/user/{login}/role/{role}")
                     .hasRole(UserRole.ADMINISTRATOR.name())
                 .mvcMatchers(HttpMethod.PUT, "/account/user/{login}")
@@ -34,7 +37,9 @@ public class AuthorizationConfiguration {
                 .mvcMatchers(HttpMethod.DELETE, "/forum/post/{id}")
                     .access("@customWebSecurity.checkPostAuthor(#id, authentication.name) or hasRole(T(telran.java47.accounting.model.UserRole).MODERATOR)")
                 .anyRequest()
-                    .authenticated()
+                        .authenticated()
+
+
         );
 
         return http.build();
