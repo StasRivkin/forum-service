@@ -20,8 +20,6 @@ public class AuthorizationConfiguration {
                     .permitAll()
                 .mvcMatchers("/account/password")
                     .authenticated()
-                .mvcMatchers("/account/**")
-                    .access("@customWebSecurity.checkPasswordExp(authentication.name)")
                 .mvcMatchers("/account/user/{login}/role/{role}")
                     .hasRole(UserRole.ADMINISTRATOR.name())
                 .mvcMatchers(HttpMethod.PUT, "/account/user/{login}")
@@ -36,6 +34,8 @@ public class AuthorizationConfiguration {
                     .access("@customWebSecurity.checkPostAuthor(#id, authentication.name)")
                 .mvcMatchers(HttpMethod.DELETE, "/forum/post/{id}")
                     .access("@customWebSecurity.checkPostAuthor(#id, authentication.name) or hasRole(T(telran.java47.accounting.model.UserRole).MODERATOR)")
+                .mvcMatchers("/account/**")
+                    .access("@customWebSecurity.checkPasswordExp(authentication.name)")
                 .anyRequest()
                         .authenticated()
 
